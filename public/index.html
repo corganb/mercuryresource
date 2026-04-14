@@ -208,7 +208,7 @@
   scene.background = new THREE.Color('#0a0a0e');
 
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 10000);
-  camera.position.set(0, 1.2, 4);
+  camera.position.set(0, 4, 12);
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -234,9 +234,58 @@
   // Tilt group holds the axial tilt; planet spins around its local Y
   // axis inside the tilt group, so sidereal rotation is correct.
   var tiltGroup = new THREE.Group();
-  tiltGroup.rotation.z = 0.000524; // 0.03 deg axial tilt
+  tiltGroup.rotation.z = 0.000524; // 0.03 deg axial tilt (Mercury is upright)
   scene.add(tiltGroup);
   tiltGroup.add(planet);
+
+  // ═══ SURFACE FEATURES (child of planet - rotates with spin) ═══
+  // Caloris Basin: ~1,550 km diameter impact basin, centered at 30N, 162W.
+  // It's one of the largest impact structures in the solar system and the
+  // most prominent feature on Mercury's surface.
+  function addSurfaceMarker(lat_deg, lon_deg, color, size) {
+    var lat = lat_deg * Math.PI / 180;
+    var lon = lon_deg * Math.PI / 180;
+    var r = 1.52;  // slightly above surface
+    var mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(size, 16, 12),
+      new THREE.MeshBasicMaterial({ color: color })
+    );
+    mesh.position.set(
+      r * Math.cos(lat) * Math.cos(lon),
+      r * Math.sin(lat),
+      r * Math.cos(lat) * Math.sin(lon)
+    );
+    planet.add(mesh);
+    return mesh;
+  }
+  addSurfaceMarker(30, -162, 0xffaa55, 0.08);  // Caloris Basin (orange)
+  addSurfaceMarker(-84, 0, 0xaaccff, 0.04);    // Permanently shadowed south polar craters (water ice)
+  addSurfaceMarker(83, 0, 0xaaccff, 0.04);     // Permanently shadowed north polar craters
+
+  // ═══ MESSENGER IMPACT SITE MARKER ═══
+  // MESSENGER crashed into Mercury on 2015-04-30 at approximately
+  // 54.4N, 149.9E (Suisei Planitia). Marked with a distinct color.
+  addSurfaceMarker(54.4, 149.9, 0xff6666, 0.05);
+
+  // ═══ BEPICOLOMBO CRUISE MARKER ═══
+  // BepiColombo (ESA/JAXA) is currently in cruise phase, approaching
+  // Mercury orbit insertion (planned 2026-12). Rendering as a marker
+  // at an approximate position a few Mercury radii away on the
+  // sunward side.
+  (function bepi() {
+    var mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 16, 12),
+      new THREE.MeshBasicMaterial({ color: 0xa0d0ff })
+    );
+    mesh.position.set(8, 2, 3);
+    tiltGroup.add(mesh);
+    // Trajectory hint line
+    var pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(8, 2, 3)];
+    tiltGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color: 0xa0d0ff, transparent: true, opacity: 0.35 })
+    ));
+  })();
 
   // Subtle starfield
   (function stars() {
@@ -261,7 +310,7 @@
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 2.2;
-  controls.maxDistance = 40;
+  controls.maxDistance = 100;
 
   // Resize
   window.addEventListener('resize', function () {
