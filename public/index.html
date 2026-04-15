@@ -124,6 +124,16 @@
 
   /* Toast */
   #rs-toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 300; background: rgba(14,16,20,0.92); backdrop-filter: blur(12px); border: 1px solid var(--b2); border-radius: 8px; padding: 8px 18px; font-size: 12px; color: var(--t1); pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+
+  /* Interactive layer list (shared pattern across all planet sites) */
+  .ly-item { display: flex; gap: 8px; align-items: flex-start; padding: 6px 4px; border-bottom: 1px dashed rgba(255,255,255,0.04); cursor: pointer; user-select: none; }
+  .ly-item:hover { background: rgba(255,255,255,0.02); }
+  .ly-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--b2); flex-shrink: 0; margin-top: 2px; background: transparent; cursor: pointer; position: relative; }
+  .ly-check.on { background: var(--accent); border-color: var(--accent); }
+  .ly-check.on::after { content: ''; position: absolute; left: 3px; top: 0px; width: 5px; height: 9px; border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .ly-body { flex: 1; min-width: 0; }
+  .ly-name { font-size: 11.5px; color: var(--t2); font-weight: 500; }
+  .ly-desc { font-size: 9.5px; color: var(--t4); margin-top: 2px; line-height: 1.35; }
 </style>
 </head>
 <body>
@@ -160,12 +170,8 @@
     <div class="info-row"><span>Sidereal day</span><span>58.6 d (3:2 tidally locked to orbit)</span></div>
     <div class="info-row"><span>Dist. from Sun</span><span>57.9 M km (0.387 AU)</span></div>
 
-    <h3>Scientific Layers</h3>
-    <div class="info-row"><span>Mercury surface</span><span style="font-size:9.5px;text-align:right">8K MESSENGER MDIS composite</span></div>
-    <div class="info-row"><span>Caloris Basin</span><span style="font-size:9.5px;text-align:right">1,550 km impact structure, 30N 162W</span></div>
-    <div class="info-row"><span>Polar ice deposits</span><span style="font-size:9.5px;text-align:right">N83 and S84 permanently shadowed craters</span></div>
-    <div class="info-row"><span>MESSENGER impact</span><span style="font-size:9.5px;text-align:right">54.4N 149.9E, crashed 2015-04-30</span></div>
-    <div class="info-row"><span>BepiColombo cruise</span><span style="font-size:9.5px;text-align:right">ESA/JAXA, orbit insertion late 2026</span></div>
+    <h3>Layers</h3>
+    <div id="layer-list"></div>
 
 
     <h3>Resource Systems</h3>
@@ -188,7 +194,7 @@
   <div class="statusbar-cell"><span class="label">FRAME</span><span class="value">Body-Fixed</span></div>
   <div class="statusbar-cell"><span class="label">BODY</span><span class="value">Mercury</span></div>
   <div class="sb-cells-right">
-    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.1</span></div>
+    <div class="statusbar-cell"><span class="label">VERSION</span><span class="value">v0.2</span></div>
   </div>
 </div>
 
@@ -242,10 +248,13 @@
   tiltGroup.add(planet);
 
   // ═══ SURFACE FEATURES (child of planet - rotates with spin) ═══
-  // Caloris Basin: ~1,550 km diameter impact basin, centered at 30N, 162W.
-  // It's one of the largest impact structures in the solar system and the
-  // most prominent feature on Mercury's surface.
-  function addSurfaceMarker(lat_deg, lon_deg, color, size) {
+  // Surface markers are grouped so the "Surface features" layer toggle can
+  // hide or show the whole set. The group is parented to `planet` so the
+  // markers rotate with Mercurys sidereal spin.
+  var surfaceFeatures = new THREE.Group();
+  planet.add(surfaceFeatures);
+
+  function addSurfaceMarker(lat_deg, lon_deg, color, size, parent) {
     var lat = lat_deg * Math.PI / 180;
     var lon = lon_deg * Math.PI / 180;
     var r = 1.52;  // slightly above surface
@@ -258,33 +267,36 @@
       r * Math.sin(lat),
       r * Math.cos(lat) * Math.sin(lon)
     );
-    planet.add(mesh);
+    (parent || surfaceFeatures).add(mesh);
     return mesh;
   }
-  addSurfaceMarker(30, -162, 0xffaa55, 0.08);  // Caloris Basin (orange)
-  addSurfaceMarker(-84, 0, 0xaaccff, 0.04);    // Permanently shadowed south polar craters (water ice)
+  addSurfaceMarker(30, -162, 0xffaa55, 0.08);  // Caloris Basin: ~1,550 km diameter impact basin
+  addSurfaceMarker(-84, 0, 0xaaccff, 0.04);    // Permanently shadowed south polar craters
   addSurfaceMarker(83, 0, 0xaaccff, 0.04);     // Permanently shadowed north polar craters
 
-  // ═══ MESSENGER IMPACT SITE MARKER ═══
   // MESSENGER crashed into Mercury on 2015-04-30 at approximately
-  // 54.4N, 149.9E (Suisei Planitia). Marked with a distinct color.
-  addSurfaceMarker(54.4, 149.9, 0xff6666, 0.05);
+  // 54.4N, 149.9E (Suisei Planitia). Kept in its own group so the
+  // "MESSENGER impact" layer can toggle it independently.
+  var messengerGroup = new THREE.Group();
+  planet.add(messengerGroup);
+  addSurfaceMarker(54.4, 149.9, 0xff6666, 0.05, messengerGroup);
 
   // ═══ BEPICOLOMBO CRUISE MARKER ═══
   // BepiColombo (ESA/JAXA) is currently in cruise phase, approaching
-  // Mercury orbit insertion (planned 2026-12). Rendering as a marker
-  // at an approximate position a few Mercury radii away on the
-  // sunward side.
+  // Mercury orbit insertion (planned late 2026). Rendered as a marker
+  // a few Mercury radii away on the sunward side with a trajectory
+  // hint line. Whole thing lives in one toggleable Group.
+  var bepiGroup = new THREE.Group();
+  tiltGroup.add(bepiGroup);
   (function bepi() {
     var mesh = new THREE.Mesh(
       new THREE.SphereGeometry(0.08, 16, 12),
       new THREE.MeshBasicMaterial({ color: 0xa0d0ff })
     );
     mesh.position.set(8, 2, 3);
-    tiltGroup.add(mesh);
-    // Trajectory hint line
+    bepiGroup.add(mesh);
     var pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(8, 2, 3)];
-    tiltGroup.add(new THREE.Line(
+    bepiGroup.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
       new THREE.LineBasicMaterial({ color: 0xa0d0ff, transparent: true, opacity: 0.35 })
     ));
@@ -374,7 +386,8 @@
     solarSystemGroup.visible = true;
   })();
 
-  // Subtle starfield
+  // Subtle starfield, stored so it can be toggled off for a clean view.
+  var starfield;
   (function stars() {
     var geo = new THREE.BufferGeometry();
     var count = 3000;
@@ -389,7 +402,8 @@
     }
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     var mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, sizeAttenuation: false, transparent: true, opacity: 0.8 });
-    scene.add(new THREE.Points(geo, mat));
+    starfield = new THREE.Points(geo, mat);
+    scene.add(starfield);
   })();
 
   // Controls
@@ -414,6 +428,54 @@
     renderer.render(scene, camera);
   }
   tick();
+
+  // ═══ INTERACTIVE LAYER LIST ═══
+  // Each entry maps a user-visible layer to a .visible flip on one of the
+  // scene Groups above. The checkbox reflects and mutates layer.visible.
+  var LAYERS = [
+    { id: 'surface',   name: 'Mercury surface',   desc: '8K MESSENGER MDIS composite (NASA)', visible: true },
+    { id: 'features',  name: 'Surface features',  desc: 'Caloris Basin and polar ice deposits', visible: true },
+    { id: 'messenger', name: 'MESSENGER impact',  desc: 'Crash site 54.4N 149.9E, 2015-04-30', visible: true },
+    { id: 'bepi',      name: 'BepiColombo cruise', desc: 'ESA/JAXA, orbit insertion late 2026', visible: true },
+    { id: 'context',   name: 'Solar System context', desc: 'Directions to the other major bodies', visible: true },
+    { id: 'stars',     name: 'Starfield',         desc: 'Procedural background stars', visible: true },
+  ];
+
+  function setLayerVisible(id, on) {
+    var l = LAYERS.find(function(x) { return x.id === id; });
+    if (!l) return;
+    l.visible = on;
+    switch (id) {
+      case 'surface':   planet.visible = on; break;
+      case 'features':  surfaceFeatures.visible = on; break;
+      case 'messenger': messengerGroup.visible = on; break;
+      case 'bepi':      bepiGroup.visible = on; break;
+      case 'context':   if (solarSystemGroup) solarSystemGroup.visible = on; break;
+      case 'stars':     if (starfield) starfield.visible = on; break;
+    }
+    renderLayerList();
+  }
+
+  function renderLayerList() {
+    var list = document.getElementById('layer-list');
+    if (!list) return;
+    var html = '';
+    LAYERS.forEach(function(l) {
+      html += '<div class="ly-item" data-layer="' + l.id + '">' +
+              '<div class="ly-check ' + (l.visible ? 'on' : '') + '"></div>' +
+              '<div class="ly-body"><div class="ly-name">' + l.name + '</div><div class="ly-desc">' + l.desc + '</div></div>' +
+              '</div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll('.ly-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var id = el.getAttribute('data-layer');
+        var l = LAYERS.find(function(x) { return x.id === id; });
+        if (l) setLayerVisible(id, !l.visible);
+      });
+    });
+  }
+  renderLayerList();
 
 })();
 
