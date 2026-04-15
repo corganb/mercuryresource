@@ -283,18 +283,67 @@
 
   // ═══ BEPICOLOMBO CRUISE MARKER ═══
   // BepiColombo (ESA/JAXA) is currently in cruise phase, approaching
-  // Mercury orbit insertion (planned late 2026). Rendered as a marker
-  // a few Mercury radii away on the sunward side with a trajectory
-  // hint line. Whole thing lives in one toggleable Group.
+  // Mercury orbit insertion (planned late 2026). Rendered as a distinctive
+  // stacked two-element spacecraft (MPO + MTM) with long cruise-stage
+  // solar panel wings. Whole stack lives in one toggleable Group.
   var bepiGroup = new THREE.Group();
   tiltGroup.add(bepiGroup);
   (function bepi() {
-    var mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.08, 16, 12),
-      new THREE.MeshBasicMaterial({ color: 0xa0d0ff })
+    var stack = new THREE.Group();
+    // MPO (Mercury Planetary Orbiter) - lower cylindrical-ish element
+    var mpo = new THREE.Mesh(
+      new THREE.BoxGeometry(0.11, 0.07, 0.11),
+      new THREE.MeshStandardMaterial({ color: 0xdedcd4, roughness: 0.4, metalness: 0.55 })
     );
-    mesh.position.set(8, 2, 3);
-    bepiGroup.add(mesh);
+    mpo.position.y = -0.05;
+    stack.add(mpo);
+    // MTM (Mercury Transfer Module) - top element with the ion drive
+    var mtm = new THREE.Mesh(
+      new THREE.BoxGeometry(0.13, 0.06, 0.13),
+      new THREE.MeshStandardMaterial({ color: 0xc9c5b8, roughness: 0.45, metalness: 0.5 })
+    );
+    mtm.position.y = 0.03;
+    stack.add(mtm);
+    // Two long solar panel wings on the MTM (distinctive cruise config)
+    var panelMat = new THREE.MeshStandardMaterial({
+      color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
+      emissive: 0x0a1a44, emissiveIntensity: 0.3,
+    });
+    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.10), panelMat);
+    lw.position.set(-0.28, 0.03, 0);
+    stack.add(lw);
+    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.10), panelMat);
+    rw.position.set(0.28, 0.03, 0);
+    stack.add(rw);
+    // High-gain antenna dish pointing forward
+    var dish = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.03, 0.03, 0.005, 20),
+      new THREE.MeshStandardMaterial({ color: 0xe8e8e8, roughness: 0.3, metalness: 0.5 })
+    );
+    dish.position.set(0, 0.07, 0.08);
+    dish.rotation.x = Math.PI / 2;
+    stack.add(dish);
+
+    stack.position.set(8, 2, 3);
+    bepiGroup.add(stack);
+
+    // Label
+    var lc = document.createElement('canvas');
+    lc.width = 256; lc.height = 48;
+    var lctx = lc.getContext('2d');
+    lctx.font = 'bold 22px -apple-system, sans-serif';
+    lctx.textAlign = 'center'; lctx.textBaseline = 'middle';
+    lctx.strokeStyle = '#000'; lctx.lineWidth = 4;
+    lctx.strokeText('BepiColombo', 128, 24);
+    lctx.fillStyle = '#a0d0ff';
+    lctx.fillText('BepiColombo', 128, 24);
+    var tex = new THREE.CanvasTexture(lc);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
+    sp.scale.set(0.8, 0.15, 1);
+    sp.position.set(0, 0.2, 0);
+    stack.add(sp);
+
+    // Trajectory hint line from Mercury to the spacecraft.
     var pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(8, 2, 3)];
     bepiGroup.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
