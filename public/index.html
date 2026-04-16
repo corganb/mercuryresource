@@ -287,16 +287,16 @@
     (parent || surfaceFeatures).add(mesh);
     return mesh;
   }
-  addSurfaceMarker(30, -162, 0xffaa55, 0.08);  // Caloris Basin: ~1,550 km diameter impact basin
-  addSurfaceMarker(-84, 0, 0xaaccff, 0.04);    // Permanently shadowed south polar craters
-  addSurfaceMarker(83, 0, 0xaaccff, 0.04);     // Permanently shadowed north polar craters
+  addSurfaceMarker(30, -162, 0xffaa55, 0.025);  // Caloris Basin: ~1,550 km diameter impact basin
+  addSurfaceMarker(-84, 0, 0xaaccff, 0.015);    // Permanently shadowed south polar craters
+  addSurfaceMarker(83, 0, 0xaaccff, 0.015);     // Permanently shadowed north polar craters
 
   // MESSENGER crashed into Mercury on 2015-04-30 at approximately
   // 54.4N, 149.9E (Suisei Planitia). Kept in its own group so the
   // "MESSENGER impact" layer can toggle it independently.
   var messengerGroup = new THREE.Group();
   planet.add(messengerGroup);
-  addSurfaceMarker(54.4, 149.9, 0xff6666, 0.05, messengerGroup);
+  addSurfaceMarker(54.4, 149.9, 0xff6666, 0.018, messengerGroup);
 
   // ═══ BEPICOLOMBO CRUISE MARKER ═══
   // BepiColombo (ESA/JAXA) is currently in cruise phase, approaching
