@@ -75,6 +75,7 @@
   /* Top bar */
   .topbar { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: var(--panel-bg); backdrop-filter: var(--panel-blur); border-bottom: 1px solid var(--b1); flex-shrink: 0; z-index: 100; position: relative; }
   .tb-left, .tb-center, .tb-right { display: flex; align-items: center; gap: 6px; }
+  .tb-left { flex-shrink: 0; margin-right: 12px; }
   .tb-center { flex: 1; justify-content: center; }
   .tb-right { position: absolute; right: 14px; top: 0; height: 44px; }
   .tb-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
@@ -298,50 +299,45 @@
   planet.add(messengerGroup);
   addSurfaceMarker(54.4, 149.9, 0xff6666, 0.018, messengerGroup);
 
-  // ═══ BEPICOLOMBO CRUISE MARKER ═══
-  // BepiColombo (ESA/JAXA) is currently in cruise phase, approaching
-  // Mercury orbit insertion (planned late 2026). Rendered as a distinctive
-  // stacked two-element spacecraft (MPO + MTM) with long cruise-stage
-  // solar panel wings. Whole stack lives in one toggleable Group.
+  // ═══ BEPICOLOMBO ORBITER (ESA/JAXA) ═══
+  // BepiColombo orbit insertion is planned late 2026. Rendered in a polar
+  // elliptical orbit (a ~ 10,000 km, e ~ 0.65, i ~ 80 deg from equator)
+  // approximating the planned science orbit. The 3D model orbits Mercury
+  // with a Kepler solver matching the other planet sites.
   var bepiGroup = new THREE.Group();
   tiltGroup.add(bepiGroup);
   (function bepi() {
+    var SCENE_UNIT_KM = 2439.7 / 1.5;
+    var BEPI = {
+      a_km: 10000,
+      e: 0.65,
+      i: 80,
+      period_days: 0.5,  // ~12-hour orbit
+      color: 0xa0d0ff,
+    };
+    BEPI.a = BEPI.a_km / SCENE_UNIT_KM;
+    BEPI.period = BEPI.period_days * 86400;
+
+    // 3D spacecraft model
     var stack = new THREE.Group();
-    // MPO (Mercury Planetary Orbiter) - lower cylindrical-ish element
     var mpo = new THREE.Mesh(
-      new THREE.BoxGeometry(0.11, 0.07, 0.11),
+      new THREE.BoxGeometry(0.08, 0.05, 0.08),
       new THREE.MeshStandardMaterial({ color: 0xdedcd4, roughness: 0.4, metalness: 0.55 })
     );
-    mpo.position.y = -0.05;
     stack.add(mpo);
-    // MTM (Mercury Transfer Module) - top element with the ion drive
-    var mtm = new THREE.Mesh(
-      new THREE.BoxGeometry(0.13, 0.06, 0.13),
-      new THREE.MeshStandardMaterial({ color: 0xc9c5b8, roughness: 0.45, metalness: 0.5 })
-    );
-    mtm.position.y = 0.03;
-    stack.add(mtm);
-    // Two long solar panel wings on the MTM (distinctive cruise config)
     var panelMat = new THREE.MeshStandardMaterial({
       color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
       emissive: 0x0a1a44, emissiveIntensity: 0.3,
     });
-    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.10), panelMat);
-    lw.position.set(-0.28, 0.03, 0);
-    stack.add(lw);
-    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.10), panelMat);
-    rw.position.set(0.28, 0.03, 0);
-    stack.add(rw);
-    // High-gain antenna dish pointing forward
+    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.06), panelMat);
+    lw.position.set(-0.18, 0, 0); stack.add(lw);
+    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.06), panelMat);
+    rw.position.set(0.18, 0, 0); stack.add(rw);
     var dish = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.03, 0.03, 0.005, 20),
+      new THREE.CylinderGeometry(0.025, 0.025, 0.004, 16),
       new THREE.MeshStandardMaterial({ color: 0xe8e8e8, roughness: 0.3, metalness: 0.5 })
     );
-    dish.position.set(0, 0.07, 0.08);
-    dish.rotation.x = Math.PI / 2;
-    stack.add(dish);
-
-    stack.position.set(8, 2, 3);
+    dish.position.set(0, 0.04, 0); stack.add(dish);
     bepiGroup.add(stack);
 
     // Label
@@ -357,15 +353,54 @@
     var tex = new THREE.CanvasTexture(lc);
     var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
     sp.scale.set(0.45, 0.085, 1);
-    sp.position.set(0, 0.2, 0);
+    sp.position.set(0, 0.12, 0);
     stack.add(sp);
 
-    // Trajectory hint line from Mercury to the spacecraft.
-    var pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(8, 2, 3)];
+    // Orbit ring (elliptical, inclined)
+    var iRad = BEPI.i * Math.PI / 180;
+    var pts = [];
+    for (var k = 0; k <= 256; k++) {
+      var nu = (k / 256) * Math.PI * 2;
+      var r = BEPI.a * (1 - BEPI.e * BEPI.e) / (1 + BEPI.e * Math.cos(nu));
+      var x = r * Math.cos(nu);
+      var z = r * Math.sin(nu);
+      var y = z * Math.sin(iRad);
+      z = z * Math.cos(iRad);
+      pts.push(new THREE.Vector3(x, y, z));
+    }
     bepiGroup.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color: 0xa0d0ff, transparent: true, opacity: 0.35 })
+      new THREE.LineBasicMaterial({ color: BEPI.color, transparent: true, opacity: 0.35 })
     ));
+
+    // Kepler solver for orbital animation
+    function solveKeplerBepi(M, e) {
+      var E = M;
+      for (var j = 0; j < 12; j++) {
+        var f = E - e * Math.sin(E) - M;
+        var fp = 1 - e * Math.cos(E);
+        E -= f / fp;
+      }
+      return E;
+    }
+    var epoch = Date.now() / 1000;
+    window.__bepi_update = function() {
+      var ts = (window.__rs_time_scale != null) ? window.__rs_time_scale : 60;
+      var dt = Date.now() / 1000 - epoch;
+      epoch = Date.now() / 1000;
+      if (!window.__bepi_sim) window.__bepi_sim = 0;
+      window.__bepi_sim += dt * ts;
+      var n = (Math.PI * 2) / BEPI.period;
+      var M = (n * window.__bepi_sim) % (Math.PI * 2);
+      var E = solveKeplerBepi(M, BEPI.e);
+      var nu = 2 * Math.atan2(Math.sqrt(1 + BEPI.e) * Math.sin(E/2), Math.sqrt(1 - BEPI.e) * Math.cos(E/2));
+      var r = BEPI.a * (1 - BEPI.e * Math.cos(E));
+      var x = r * Math.cos(nu);
+      var z = r * Math.sin(nu);
+      var y = z * Math.sin(iRad);
+      z = z * Math.cos(iRad);
+      stack.position.set(x, y, z);
+    };
   })();
 
 
@@ -490,6 +525,7 @@
   function tick() {
     requestAnimationFrame(tick);
     planet.rotation.y += 0.0000012;
+    if (window.__bepi_update) window.__bepi_update();
     controls.update();
     renderer.render(scene, camera);
   }
