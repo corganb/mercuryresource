@@ -235,7 +235,7 @@
   var texLoader = new THREE.TextureLoader();
   texLoader.crossOrigin = 'anonymous';
   var material = new THREE.MeshStandardMaterial({
-    map: texLoader.load('https://terraresource.net/assets/planet-textures/8k_mercury.jpg', function(t) { t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.minFilter = THREE.LinearMipmapLinearFilter; t.needsUpdate = true; }),
+    map: texLoader.load('https://terraresource.net/assets/planet-textures/4k_mercury.jpg', function(t) { t.anisotropy = renderer.capabilities.getMaxAnisotropy(); t.minFilter = THREE.LinearMipmapLinearFilter; t.needsUpdate = true; }),
     roughness: 0.85,
     metalness: 0.0
   });
@@ -300,10 +300,10 @@
     BEPI.a = BEPI.a_km / SCENE_UNIT_KM;
     BEPI.period = BEPI.period_days * 86400;
 
-    // 3D spacecraft model
+    // 3D spacecraft model (scaled to be subtle relative to Mercury)
     var stack = new THREE.Group();
     var mpo = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 0.05, 0.08),
+      new THREE.BoxGeometry(0.03, 0.02, 0.03),
       new THREE.MeshStandardMaterial({ color: 0xdedcd4, roughness: 0.4, metalness: 0.55 })
     );
     stack.add(mpo);
@@ -311,15 +311,15 @@
       color: 0x1a2a55, side: THREE.DoubleSide, roughness: 0.2, metalness: 0.6,
       emissive: 0x0a1a44, emissiveIntensity: 0.3,
     });
-    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.06), panelMat);
-    lw.position.set(-0.18, 0, 0); stack.add(lw);
-    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.06), panelMat);
-    rw.position.set(0.18, 0, 0); stack.add(rw);
+    var lw = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.025), panelMat);
+    lw.position.set(-0.06, 0, 0); stack.add(lw);
+    var rw = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.025), panelMat);
+    rw.position.set(0.06, 0, 0); stack.add(rw);
     var dish = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.025, 0.004, 16),
+      new THREE.CylinderGeometry(0.01, 0.01, 0.002, 12),
       new THREE.MeshStandardMaterial({ color: 0xe8e8e8, roughness: 0.3, metalness: 0.5 })
     );
-    dish.position.set(0, 0.04, 0); stack.add(dish);
+    dish.position.set(0, 0.015, 0); stack.add(dish);
     bepiGroup.add(stack);
 
     // Label
