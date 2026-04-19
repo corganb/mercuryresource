@@ -278,9 +278,12 @@
     (parent || surfaceFeatures).add(mesh);
     return mesh;
   }
-  addSurfaceMarker(30, -162, 0xffaa55, 0.025);  // Caloris Basin: ~1,550 km diameter impact basin
-  addSurfaceMarker(-84, 0, 0xaaccff, 0.015);    // Permanently shadowed south polar craters
-  addSurfaceMarker(83, 0, 0xaaccff, 0.015);     // Permanently shadowed north polar craters
+  var calorisMesh = addSurfaceMarker(30, -162, 0xffaa55, 0.025);
+  calorisMesh.userData = { _analysis: { name: 'Caloris Basin', type: 'Impact structure', desc: 'One of the largest impact basins in the Solar System. ~1,550 km diameter, formed ~3.9 Gyr ago. The impact created chaotic terrain on the exact opposite side of Mercury.', fields: [{label:'Diameter',value:'~1,550 km'},{label:'Location',value:'30 N, 162 W'},{label:'Age',value:'~3.9 Gyr'},{label:'Discovery',value:'Mariner 10 (1974)'}], icon: '\u26AB' } };
+  var polarS = addSurfaceMarker(-84, 0, 0xaaccff, 0.015);
+  polarS.userData = { _analysis: { name: 'South polar ice deposits', type: 'Permanently shadowed craters', desc: 'Radar-bright deposits in permanently shadowed craters near the south pole. Confirmed as water ice by MESSENGER neutron spectrometer in 2012.', fields: [{label:'Latitude',value:'~84 S'},{label:'Evidence',value:'Radar + neutron'},{label:'Confirmed',value:'2012 (MESSENGER)'}], icon: '\u2744' } };
+  var polarN = addSurfaceMarker(83, 0, 0xaaccff, 0.015);
+  polarN.userData = { _analysis: { name: 'North polar ice deposits', type: 'Permanently shadowed craters', desc: 'Multiple permanently shadowed craters near the north pole containing water ice. Some deposits are covered by a thin dark organic layer.', fields: [{label:'Latitude',value:'~83 N'},{label:'Evidence',value:'Radar + neutron'},{label:'Confirmed',value:'2012 (MESSENGER)'}], icon: '\u2744' } };
 
   // MESSENGER crashed into Mercury on 2015-04-30 at approximately
   // 54.4N, 149.9E (Suisei Planitia). Kept in its own group so the
