@@ -4,5 +4,22 @@
   <url><loc>https://mercuryresource.net/faq</loc><lastmod>2026-04-24</lastmod></url>
   <url><loc>https://mercuryresource.net/privacy</loc><lastmod>2026-04-24</lastmod></url>
   <url><loc>https://mercuryresource.net/terms</loc><lastmod>2026-04-24</lastmod></url>
-  <url><loc>https://mercuryresource.net/wiki</loc><lastmod>2026-04-24</lastmod></url>
+  <url>
+    <loc>https://mercuryresource.net/research</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mercuryresource.net/research/mercury-polar-volatiles</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://mercuryresource.net/research/caloris-basin-antipodal-terrain</loc>
+    <lastmod>2026-04-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
