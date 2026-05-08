@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BepiColombo flyby magnetic-field signatures and Mercury magnetosphere context | MercuryResource Research Archive</title>
+<meta name="description" content="Review of the BepiColombo Mercury flyby magnetic-field measurements through 2024, the cross-comparison with MESSENGER&#x27;s orbital baseline, and the implications for Mercury&#x27;s offset-dipole structure and the cusp-and-current-sheet topology.">
+<link rel="canonical" href="/research/bepicolombo-flyby-magnetic">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="BepiColombo flyby magnetic-field signatures and Mercury magnetosphere context">
+<meta property="og:description" content="Review of the BepiColombo Mercury flyby magnetic-field measurements through 2024, the cross-comparison with MESSENGER&#x27;s orbital baseline, and the implications for Mercury&#x27;s offset-dipole structure and the cusp-and-current-sheet topology.">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-04-28">
+<meta property="article:author" content="Corgan Studio, Inc.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0c10; color: rgba(245,248,255,0.95); font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1.7; }
+  .container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; }
+  .back { display: inline-block; color: #a0a0a0; text-decoration: none; font-size: 12px; letter-spacing: 0.05em; margin-bottom: 32px; opacity: 0.7; }
+  .back:hover { opacity: 1; }
+  h1 { font-size: 28px; font-weight: 600; margin-bottom: 10px; color: #a0a0a0; line-height: 1.25; }
+  .abstract { font-size: 14px; color: rgba(200,210,230,0.85); margin-bottom: 16px; max-width: 700px; }
+  .meta { font-size: 11px; color: rgba(160,172,200,0.55); letter-spacing: 0.04em; margin-bottom: 36px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  article h2 { font-size: 13px; font-weight: 600; color: #a0a0a0; margin: 32px 0 12px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  article p { font-size: 14px; color: rgba(220,228,242,0.9); margin-bottom: 14px; }
+  article p strong { color: rgba(245,248,255,1); }
+  .refs { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .refs h2 { font-size: 12px; font-weight: 600; color: rgba(180,192,210,0.85); margin-bottom: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .refs ol { list-style: decimal; padding-left: 24px; font-size: 12px; color: rgba(180,192,210,0.78); }
+  .refs li { margin-bottom: 8px; line-height: 1.5; }
+  .refs a { color: rgba(180,210,255,0.85); text-decoration: none; word-break: break-all; }
+  .refs a:hover { color: #a0a0a0; }
+  .tier-note { margin-top: 32px; padding: 14px 16px; border-radius: 4px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.30); color: rgba(200,220,245,0.9); font-size: 12px; line-height: 1.6; }
+  .tier-note strong { color: #7eb6ff; }
+  .tier-note .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: rgba(80,140,220,0.15); border: 1px solid rgba(80,140,220,0.4); color: #7eb6ff; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 8px; vertical-align: middle; }
+  .tier-note a { color: #7eb6ff; }
+  .footer { margin-top: 48px; font-size: 11px; color: rgba(130,145,175,0.5); display: flex; gap: 16px; flex-wrap: wrap; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer a { color: rgba(160,172,200,0.65); text-decoration: none; }
+  .footer a:hover { color: rgba(200,210,230,0.9); }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/research" class="back">&larr; Research Archive</a>
+  <h1>BepiColombo flyby magnetic-field signatures and Mercury magnetosphere context</h1>
+  <div class="abstract">Review of the BepiColombo Mercury flyby magnetic-field measurements through 2024, the cross-comparison with MESSENGER&#x27;s orbital baseline, and the implications for Mercury&#x27;s offset-dipole structure and the cusp-and-current-sheet topology.</div>
+  <div class="meta">2026-04-28 &middot; 6 min read &middot; Reviewed by Corgan Studio, Inc.</div>
+
+  <article>
+
+    <h2>Introduction</h2>
+    <p>BepiColombo is the joint ESA-JAXA Mercury exploration mission, launched in October 2018 and on a multi-flyby cruise to Mercury orbit insertion in late 2026. The mission carries two orbiter spacecraft: the Mercury Planetary Orbiter (MPO, ESA) and the Mercury Magnetospheric Orbiter (Mio, JAXA). During the cruise phase, BepiColombo has conducted three Mercury flybys (October 2021, June 2022, June 2023) and a fourth was planned for late 2024. The flybys have provided the first new in-situ Mercury magnetic-field data since the MESSENGER mission ended in 2015. This report reviews the flyby magnetic-field signatures and the implications for Mercury magnetosphere science.</p>
+
+    <h2>The MESSENGER baseline</h2>
+    <p>MESSENGER (NASA, in Mercury orbit 2011-2015) established the baseline for Mercury magnetic-field knowledge. The principal results were: (1) Mercury has a global axial dipole offset northward by approximately 0.2 Mercury radii, with surface field strength of approximately 200 nT at the equator (compared to 25,000 nT at Earth's equator); (2) the dipole tilt relative to the rotation axis is small (less than 1 degree); (3) higher-order magnetic-field components are weaker than at Earth, leaving the dipole structure as the dominant feature. The offset dipole produces an asymmetric magnetosphere with a small northern polar region and a larger southern auroral zone.</p>
+
+    <h2>BepiColombo flyby geometry</h2>
+    <p>The BepiColombo flybys have approached Mercury at altitudes of approximately 200-1,500 km, comparable to or closer than the closest MESSENGER orbital approaches. The flybys probed the magnetosphere at different local times and seasons, providing complementary geometric coverage to the MESSENGER orbital archive. Each flyby produced a single magnetic-field profile through the magnetosphere, the magnetopause, and the upstream solar wind, with high-cadence sampling along the trajectory.</p>
+
+    <h2>Flyby magnetic-field results</h2>
+    <p>The combined MPO/MAG and Mio/MGF magnetometers produced cross-validated magnetic-field measurements at Mercury that are consistent with the MESSENGER offset-dipole model. The first-pass interpretation of the flyby data confirms the offset-dipole geometry and provides incremental refinement of the higher-order field components. The principal new finding is improved characterisation of the dynamic response of the magnetosphere to solar-wind variability: the BepiColombo flybys captured magnetosphere transitions through different solar-wind regimes that were under-sampled in the MESSENGER orbital record.</p>
+
+    <h2>Magnetopause and bow shock</h2>
+    <p>Mercury's magnetosphere is highly compressed by the solar wind. The standoff distance of the magnetopause from the planet centre is typically 1.4-1.5 Mercury radii, an order of magnitude smaller relative to the planet than at Earth. The BepiColombo flybys traversed the magnetopause at speeds of approximately 5-7 km/s, providing cleaner crossing-time data than the slower MESSENGER orbital crossings. The bow shock, magnetopause, and magnetosheath thicknesses were resolved in the flyby data and have refined the empirical models for these structures.</p>
+
+    <h2>Cusp and tail-current-sheet structure</h2>
+    <p>The cusps - regions where solar-wind plasma can directly enter the magnetosphere along open field lines - are large fractional features at Mercury due to the small magnetosphere. The southern cusp is particularly prominent due to the offset-dipole geometry. BepiColombo's flyby through the southern hemisphere magnetosphere provided detailed cusp-region magnetic-field measurements that constrain the polar-cap field-line topology. The tail current sheet, which separates oppositely-directed magnetic-field lobes downstream of the planet, was also crossed by the flybys and shows similar structure to the well-studied Earth tail current sheet but at a much smaller spatial scale.</p>
+
+    <h2>Implications for Mercury internal structure</h2>
+    <p>Mercury's magnetic field is generated by an active dynamo in a partially-molten outer core. The offset-dipole geometry is a constraint on the dynamo mechanism: most current dynamo models reproduce a near-axial dipole with small offset only under specific conditions of inner-core size, thermal stratification, and convective regime. The BepiColombo flyby data, when combined with the MESSENGER archive and the upcoming orbital phase, will provide tighter constraints on these dynamo parameters and on the implied present-day inner-core size and thermal evolution.</p>
+
+    <h2>Outlook</h2>
+    <p>BepiColombo's primary mission begins after Mercury orbit insertion in late 2026. The two orbiters then operate independently, with MPO in a low circular orbit (480 by 1,500 km) and Mio in a higher elliptical orbit (590 by 11,640 km). The combined orbital phase will provide approximately one Earth year of high-cadence magnetic-field coverage at multiple local times and altitudes, dramatically extending the MESSENGER baseline. The Mio mission specifically targets magnetospheric dynamics with higher temporal resolution and broader plasma instrumentation than MESSENGER carried. The combined mission archive is expected to resolve the principal open questions on Mercury's dynamo, magnetosphere structure, and surface-magnetosphere interaction.</p>
+  </article>
+
+  <div class="refs">
+    <h2>References</h2>
+    <ol>
+      <li><a href="https://www.esa.int/Science_Exploration/Space_Science/BepiColombo" target="_blank" rel="noopener">ESA BepiColombo mission</a></li>
+      <li><a href="https://www.stp.isas.jaxa.jp/mercury/en/" target="_blank" rel="noopener">JAXA Mio (Mercury Magnetospheric Orbiter)</a></li>
+      <li><a href="https://www.nasa.gov/mission_pages/messenger/main/index.html" target="_blank" rel="noopener">NASA MESSENGER mission archive</a></li>
+      <li><a href="https://pds-geosciences.wustl.edu/missions/messenger/" target="_blank" rel="noopener">NASA PDS Geosciences Node Mercury data</a></li>
+    </ol>
+  </div>
+
+  <div class="tier-note"><span class="pill">Researcher</span><strong>Citation exports.</strong> This article is open and free to read. Researcher tier subscribers can download a citation-ready PDF (with formatted bibliography), BibTeX entry, and persistent article identifier for use in published work. <a href="/">See plans</a>.</div>
+
+  <div class="footer">
+    <a href="/">Home</a>
+    <a href="/research">Research Archive</a>
+    <a href="/faq">FAQ</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</div>
+</body>
+</html>
